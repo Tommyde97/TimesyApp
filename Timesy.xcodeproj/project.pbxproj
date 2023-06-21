@@ -53,6 +53,7 @@
 		725B7E882A435EE800CB61CC /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 725B7E872A435EE800CB61CC /* GoogleService-Info.plist */; };
 		725B7E8A2A43613700CB61CC /* DatabaseManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E892A43613700CB61CC /* DatabaseManager.swift */; };
 		725B7E8C2A437E7A00CB61CC /* LoginViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E8B2A437E7A00CB61CC /* LoginViewController.swift */; };
+		725B7E902A43818B00CB61CC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E8F2A43818B00CB61CC /* Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -73,6 +74,7 @@
 		725B7E872A435EE800CB61CC /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		725B7E892A43613700CB61CC /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		725B7E8B2A437E7A00CB61CC /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
+		725B7E8F2A43818B00CB61CC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -154,6 +156,7 @@
 				725B7E1E2A43504400CB61CC /* AppDelegate.swift */,
 				725B7E202A43504400CB61CC /* SceneDelegate.swift */,
 				725B7E892A43613700CB61CC /* DatabaseManager.swift */,
+				725B7E8F2A43818B00CB61CC /* Extensions.swift */,
 			);
 			path = Resources;
 			sourceTree = "<group>";
@@ -328,6 +331,7 @@
 				725B7E1F2A43504400CB61CC /* AppDelegate.swift in Sources */,
 				725B7E422A43520900CB61CC /* VideoPlayerViewController.swift in Sources */,
 				725B7E292A43504400CB61CC /* Timesy.xcdatamodeld in Sources */,
+				725B7E902A43818B00CB61CC /* Extensions.swift in Sources */,
 				725B7E462A43522B00CB61CC /* ProfileViewController.swift in Sources */,
 				725B7E212A43504400CB61CC /* SceneDelegate.swift in Sources */,
 				725B7E402A4351F800CB61CC /* PhotoViewerViewController.swift in Sources */,
