@@ -1,0 +1,34 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>CLIENT_ID</key>
+	<string>213819055793-h7pq6rihtc40q7ecn17f56g1lm136ce6.apps.googleusercontent.com</string>
+	<key>REVERSED_CLIENT_ID</key>
+	<string>com.googleusercontent.apps.213819055793-h7pq6rihtc40q7ecn17f56g1lm136ce6</string>
+	<key>API_KEY</key>
+	<string>AIzaSyD4G23iUkFe_gMYMU_FBsdtGE8eSZUbIaM</string>
+	<key>GCM_SENDER_ID</key>
+	<string>213819055793</string>
+	<key>PLIST_VERSION</key>
+	<string>1</string>
+	<key>BUNDLE_ID</key>
+	<string>tommyde97.Timesy</string>
+	<key>PROJECT_ID</key>
+	<string>timesy-dfd06</string>
+	<key>STORAGE_BUCKET</key>
+	<string>timesy-dfd06.appspot.com</string>
+	<key>IS_ADS_ENABLED</key>
+	<false></false>
+	<key>IS_ANALYTICS_ENABLED</key>
+	<false></false>
+	<key>IS_APPINVITE_ENABLED</key>
+	<true></true>
+	<key>IS_GCM_ENABLED</key>
+	<true></true>
+	<key>IS_SIGNIN_ENABLED</key>
+	<true></true>
+	<key>GOOGLE_APP_ID</key>
+	<string>1:213819055793:ios:7395ad6948e81dc6754c90</string>
+</dict>
+</plist>
