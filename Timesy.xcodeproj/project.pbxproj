@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7223BA0D2A4A328B00F1978B /* GoogleSignIn in Frameworks */ = {isa = PBXBuildFile; productRef = 7223BA0C2A4A328B00F1978B /* GoogleSignIn */; };
 		725B7E1F2A43504400CB61CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E1E2A43504400CB61CC /* AppDelegate.swift */; };
 		725B7E212A43504400CB61CC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E202A43504400CB61CC /* SceneDelegate.swift */; };
 		725B7E232A43504400CB61CC /* ConversationsViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E222A43504400CB61CC /* ConversationsViewController.swift */; };
@@ -75,6 +76,7 @@
 		725B7E892A43613700CB61CC /* DatabaseManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DatabaseManager.swift; sourceTree = "<group>"; };
 		725B7E8B2A437E7A00CB61CC /* LoginViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewController.swift; sourceTree = "<group>"; };
 		725B7E8F2A43818B00CB61CC /* Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Extensions.swift; sourceTree = "<group>"; };
+		72C6EC3A2A44E80100B594EF /* Timesy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Timesy.entitlements; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -99,6 +101,7 @@
 				725B7E792A4354F400CB61CC /* FirebaseRemoteConfigSwift in Frameworks */,
 				725B7E6B2A4354ED00CB61CC /* FirebaseInAppMessaging-Beta in Frameworks */,
 				725B7E5D2A4354E800CB61CC /* FirebaseDatabaseSwift in Frameworks */,
+				7223BA0D2A4A328B00F1978B /* GoogleSignIn in Frameworks */,
 				725B7E672A4354EB00CB61CC /* FirebaseFunctions in Frameworks */,
 				725B7E7D2A4354F600CB61CC /* FirebaseStorageCombine-Community in Frameworks */,
 				725B7E772A4354F300CB61CC /* FirebaseRemoteConfig in Frameworks */,
@@ -138,6 +141,7 @@
 		725B7E1D2A43504400CB61CC /* Timesy */ = {
 			isa = PBXGroup;
 			children = (
+				72C6EC3A2A44E80100B594EF /* Timesy.entitlements */,
 				725B7E352A43508300CB61CC /* Resources */,
 				725B7E362A43508D00CB61CC /* ViewModels */,
 				725B7E372A43509C00CB61CC /* Models */,
@@ -263,6 +267,7 @@
 				725B7E812A43564A00CB61CC /* FacebookGamingServices */,
 				725B7E832A43564C00CB61CC /* FacebookLogin */,
 				725B7E852A43564D00CB61CC /* FacebookShare */,
+				7223BA0C2A4A328B00F1978B /* GoogleSignIn */,
 			);
 			productName = Timesy;
 			productReference = 725B7E1B2A43504400CB61CC /* Timesy.app */;
@@ -295,6 +300,7 @@
 			packageReferences = (
 				725B7E472A4354E500CB61CC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
 				725B7E7E2A43564900CB61CC /* XCRemoteSwiftPackageReference "facebook-ios-sdk" */,
+				7223BA0B2A4A328B00F1978B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */,
 			);
 			productRefGroup = 725B7E1C2A43504400CB61CC /* Products */;
 			projectDirPath = "";
@@ -480,11 +486,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Timesy/Timesy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7VVXP36UX5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Timesy/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "$(PRODUCT_NAME) camera use";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow access to select a photo for your profile";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -508,11 +517,14 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = Timesy/Timesy.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_TEAM = 7VVXP36UX5;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = Timesy/Info.plist;
+				INFOPLIST_KEY_NSCameraUsageDescription = "$(PRODUCT_NAME) camera use";
+				INFOPLIST_KEY_NSPhotoLibraryUsageDescription = "Please allow access to select a photo for your profile";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = Main;
@@ -555,6 +567,14 @@
 /* End XCConfigurationList section */
 
 /* Begin XCRemoteSwiftPackageReference section */
+		7223BA0B2A4A328B00F1978B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/google/GoogleSignIn-iOS";
+			requirement = {
+				kind = exactVersion;
+				version = 6.0.2;
+			};
+		};
 		725B7E472A4354E500CB61CC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {
 			isa = XCRemoteSwiftPackageReference;
 			repositoryURL = "https://github.com/firebase/firebase-ios-sdk";
@@ -574,6 +594,11 @@
 /* End XCRemoteSwiftPackageReference section */
 
 /* Begin XCSwiftPackageProductDependency section */
+		7223BA0C2A4A328B00F1978B /* GoogleSignIn */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7223BA0B2A4A328B00F1978B /* XCRemoteSwiftPackageReference "GoogleSignIn-iOS" */;
+			productName = GoogleSignIn;
+		};
 		725B7E482A4354E500CB61CC /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;
 			package = 725B7E472A4354E500CB61CC /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */;

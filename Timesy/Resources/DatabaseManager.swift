@@ -45,11 +45,11 @@ extension DatabaseManager {
 struct TimesyAppUser {
     let firstName: String
     let lastName: String
-    let emailAddres: String
+    let emailAddress: String
     //let profilePictureURL: String
     
     var safeEmail: String {
-        var safeEmail = emailAddres.replacingOccurrences(of: ".", with: "-")
+        var safeEmail = emailAddress.replacingOccurrences(of: ".", with: "-")
         safeEmail = safeEmail.replacingOccurrences(of: "@", with: "-")
         return safeEmail
     }

@@ -5,11 +5,13 @@
 //  Created by Tomas D. De Andrade Gomes on 6/21/23.
 //
 
+
 import UIKit
+import Firebase
 import FirebaseAuth
 import FacebookLogin
 import FacebookCore
-//import GoogleSignIn
+import GoogleSignIn
 
 class LoginViewController: UIViewController {
     
@@ -74,10 +76,36 @@ class LoginViewController: UIViewController {
         return button
     }()
     
+    private var shouldPerformFacebookLogin = true
+
+    private let googleLogInButton = GIDSignInButton()
+    
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        //GIDSignIn.sharedInstance().presentingViewController = self
+        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
+
+        // Create Google Sign In configuration object.
+        let config = GIDConfiguration(clientID: clientID)
+        GIDSignIn.sharedInstance.configuration = config
+
+        
+        GIDSignIn.sharedInstance.signIn(withPresenting: self) { result, error in
+            guard error == nil else {
+              // ...
+                return
+            }
+            guard let user = result?.user,
+               let idToken = user.idToken?.tokenString
+             else {
+               // ...
+                return
+            }
+            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
+                                                             accessToken: user.accessToken.tokenString)
+              // ...
+            }
         
         view.backgroundColor = .white
         title = "Log In"
@@ -101,6 +129,7 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(passwordField)
         scrollView.addSubview(loginButton)
         scrollView.addSubview(facebookLoginButton)
+        scrollView.addSubview(googleLogInButton)
         
     }
     
@@ -129,12 +158,19 @@ class LoginViewController: UIViewController {
                                     y: loginButton.bottom+10,
                                     width: scrollView.width-60,
                                     height: 42)
-        facebookLoginButton.frame.origin.y = loginButton.bottom+20
+        googleLogInButton.frame = CGRect (x: 30,
+                                    y: facebookLoginButton.bottom+10,
+                                    width: scrollView.width-60,
+                                    height: 42)
+       
+        
+        
     }
     
     @objc private func loginButtonTapped() {
         let loginManager = LoginManager()
            loginManager.logIn(permissions: ["public_profile", "email"], from: self) { result, error in
+               // Process result or error
            }
        
         emailField.resignFirstResponder()
@@ -200,7 +236,8 @@ extension LoginViewController: LoginButtonDelegate {
             return
         }
         
-        
+        shouldPerformFacebookLogin = false
+
         let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me",
                                                          parameters: ["fields": "email, name"],
                                                          tokenString: token,
@@ -234,8 +271,8 @@ extension LoginViewController: LoginButtonDelegate {
             DatabaseManager.shared.userExists(with: email, completion: { exists in
                 if !exists {
                     DatabaseManager.shared.insertUser(with: TimesyAppUser(firstName: firstName,
-                                                                        lastName: lastName,
-                                                                        emailAddres: email))
+                                                                          lastName: lastName,
+                                                                          emailAddress: email))
                 }
             })
             let credential = FacebookAuthProvider.credential(withAccessToken: token)
@@ -258,3 +295,4 @@ extension LoginViewController: LoginButtonDelegate {
         })
     }
 }
+

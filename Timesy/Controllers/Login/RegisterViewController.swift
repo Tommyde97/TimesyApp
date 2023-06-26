@@ -210,7 +210,7 @@ class RegisterViewController: UIViewController {
                 
                 DatabaseManager.shared.insertUser(with: TimesyAppUser(firstName: firstName,
                                                                     lastName: lastName,
-                                                                    emailAddres: email))
+                                                                    emailAddress: email))
                 
                 
                 strongSelf.navigationController?.dismiss(animated: true, completion: nil)
