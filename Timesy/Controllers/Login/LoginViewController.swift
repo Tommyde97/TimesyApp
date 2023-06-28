@@ -9,8 +9,7 @@
 import UIKit
 import Firebase
 import FirebaseAuth
-import FacebookLogin
-import FacebookCore
+import FBSDKLoginKit
 import GoogleSignIn
 
 class LoginViewController: UIViewController {
@@ -76,37 +75,29 @@ class LoginViewController: UIViewController {
         return button
     }()
     
-    private var shouldPerformFacebookLogin = true
+    //private var shouldPerformFacebookLogin = true
 
-    private let googleLogInButton = GIDSignInButton()
+    private let googleLogInButton: GIDSignInButton = {
+        let button = GIDSignInButton()
+        return button
+    }()
     
+    private var loginObserver: NSObjectProtocol?
     
     override func viewDidLoad() {
         super.viewDidLoad()
         
-        guard let clientID = FirebaseApp.app()?.options.clientID else { return }
-
-        // Create Google Sign In configuration object.
-        let config = GIDConfiguration(clientID: clientID)
-        GIDSignIn.sharedInstance.configuration = config
-
-        
-        GIDSignIn.sharedInstance.signIn(withPresenting: self) { result, error in
-            guard error == nil else {
-              // ...
+        loginObserver = NotificationCenter.default.addObserver(forName: .didLogInNotification,
+                                                               object: nil,
+                                                               queue: .main, using: { [weak self] _ in
+            
+            guard let strongSelf = self else {
                 return
             }
-            guard let user = result?.user,
-               let idToken = user.idToken?.tokenString
-             else {
-               // ...
-                return
-            }
-            let credential = GoogleAuthProvider.credential(withIDToken: idToken,
-                                                             accessToken: user.accessToken.tokenString)
-              // ...
-            }
-        
+             
+            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+        })
+
         view.backgroundColor = .white
         title = "Log In"
         navigationItem.rightBarButtonItem = UIBarButtonItem (title: "Register",
@@ -121,8 +112,7 @@ class LoginViewController: UIViewController {
         passwordField.delegate = self
         facebookLoginButton.delegate = self
         
-        
-        //Add Subviewsjaim
+        //Add Subviews
         view.addSubview(scrollView)
         scrollView.addSubview(imageView)
         scrollView.addSubview(emailField)
@@ -131,6 +121,12 @@ class LoginViewController: UIViewController {
         scrollView.addSubview(facebookLoginButton)
         scrollView.addSubview(googleLogInButton)
         
+    }
+    
+    deinit {
+        if let observer = loginObserver {
+            NotificationCenter.default.removeObserver(observer)
+        }
     }
     
     override func viewDidLayoutSubviews() {
@@ -236,7 +232,8 @@ extension LoginViewController: LoginButtonDelegate {
             return
         }
         
-        shouldPerformFacebookLogin = false
+        
+        //shouldPerformFacebookLogin = false
 
         let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me",
                                                          parameters: ["fields": "email, name"],
@@ -263,10 +260,6 @@ extension LoginViewController: LoginButtonDelegate {
 
             let lastNameComponents = Array(nameComponents.dropFirst())
             let lastName = lastNameComponents.joined(separator: " ")
-            
-            
-           // let firstName = nameComponents[0]
-           // let lastName = nameComponents[1]
             
             DatabaseManager.shared.userExists(with: email, completion: { exists in
                 if !exists {

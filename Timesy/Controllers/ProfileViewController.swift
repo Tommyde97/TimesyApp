@@ -7,7 +7,7 @@
 
 import UIKit
 import FirebaseAuth
-import FacebookLogin
+import FBSDKLoginKit
 import GoogleSignIn
 
 class ProfileViewController: UIViewController {
