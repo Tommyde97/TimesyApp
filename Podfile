@@ -23,4 +23,9 @@ pod 'FacebookShare'
 
 pod 'GoogleSignIn', '7.0.0'
 
+pod 'MessageKit'
+pod 'JGProgressHUD'
+pod 'RealmSwift'
+pod 'SDWebImage'
+
 end

@@ -74,8 +74,6 @@ class LoginViewController: UIViewController {
         button.permissions = ["public_profile", "email"]
         return button
     }()
-    
-    //private var shouldPerformFacebookLogin = true
 
     private let googleLogInButton: GIDSignInButton = {
         let button = GIDSignInButton()
@@ -158,17 +156,10 @@ class LoginViewController: UIViewController {
                                     y: facebookLoginButton.bottom+10,
                                     width: scrollView.width-60,
                                     height: 42)
-       
-        
-        
     }
     
+    
     @objc private func loginButtonTapped() {
-        let loginManager = LoginManager()
-           loginManager.logIn(permissions: ["public_profile", "email"], from: self) { result, error in
-               // Process result or error
-           }
-       
         emailField.resignFirstResponder()
         passwordField.resignFirstResponder()
         
@@ -179,20 +170,22 @@ class LoginViewController: UIViewController {
         }
         
         // Firebase Log In
-        
-        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password, completion: { [weak self] authResult, error in
-            guard let strongSelf = self else{
+
+        FirebaseAuth.Auth.auth().signIn(withEmail: email, password: password) { [weak self] authResult, error in
+            guard let strongSelf = self else {
                 return
             }
-            guard let result = authResult, error == nil else {
-                print("Failed to log in user with email: \(email)")
+            if let error = error {
+                print("Failed to log in user with email: \(email), error: \(error.localizedDescription)")
                 return
             }
             
-            let user = result.user
-            print("Loggged In User \(user)")
-            strongSelf.navigationController?.dismiss(animated: true, completion: nil)
-        })
+            if let user = authResult?.user {
+                print("Logged In User: \(user)")
+                strongSelf.navigationController?.dismiss(animated: true, completion: nil)
+            }
+        }
+        
     }
     
     func alertUserLoginError() {
@@ -200,6 +193,7 @@ class LoginViewController: UIViewController {
         alert.addAction(UIAlertAction(title: "Dismiss", style: .cancel, handler: nil))
         present(alert, animated: true)
     }
+    
     @objc private func didTapRegister() {
         let vc = RegisterViewController()
         vc.title = "Create Account"
@@ -207,6 +201,8 @@ class LoginViewController: UIViewController {
     }
     
 }
+
+// MARK: Extensions
 
 extension LoginViewController: UITextFieldDelegate {
     
@@ -231,9 +227,6 @@ extension LoginViewController: LoginButtonDelegate {
             print("User failed to log in with Facebook")
             return
         }
-        
-        
-        //shouldPerformFacebookLogin = false
 
         let facebookRequest = FBSDKLoginKit.GraphRequest(graphPath: "me",
                                                          parameters: ["fields": "email, name"],
