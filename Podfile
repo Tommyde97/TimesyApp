@@ -1,5 +1,5 @@
 # Uncomment the next line to define a global platform for your project
-# platform :ios, '9.0'
+# platform :ios, '13.0'
 
 target 'Timesy' do
   # Comment the next line if you don't want to use dynamic frameworks
@@ -9,9 +9,10 @@ target 'Timesy' do
 
 # Firebase
 
-pod 'Firebase/Core'
-pod 'Firebase/Auth'
-pod 'Firebase/Database'
+pod 'FirebaseCore'
+pod 'FirebaseAuth'
+pod 'FirebaseDatabase'
+pod 'FirebaseStorage'
 
 # Facebook Log In
 
@@ -21,11 +22,11 @@ pod 'FacebookShare'
 
 # Google Sign In
 
-pod 'GoogleSignIn', '7.0.0'
+pod 'GoogleSignIn'
 
 pod 'MessageKit'
 pod 'JGProgressHUD'
-pod 'RealmSwift'
+# pod 'RealmSwift'
 pod 'SDWebImage'
 
 end

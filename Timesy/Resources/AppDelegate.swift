@@ -8,8 +8,9 @@
 
 import UIKit
 import CoreData
-import Firebase
+import FirebaseCore
 import FBSDKLoginKit
+import FirebaseAuth
 import GoogleSignIn
 
 @UIApplicationMain
@@ -20,9 +21,6 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         
         FirebaseApp.configure()
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
-        //GIDSignIn.sharedInstance.clientID = "745246872491-13vo6rnbikh9vvj4ef4frgopq1h0q8jj.apps.googleusercontent.com"
-        //GIDSignIn.sharedInstance.delegate = self
-        //GIDSignIn.sharedInstance.restorePreviousSignIn()
         return true
     }
     
@@ -34,7 +32,16 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                                                sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
                                                annotation: options[UIApplication.OpenURLOptionsKey.annotation]
         )
-        return GIDSignIn.sharedInstance.handle(url)
+        var handled: Bool
+        handled = GIDSignIn.sharedInstance.handle(url)
+        if handled {
+            return true
+        }
+        
+        // Handle other custom URL types.
+        
+        // If not handled by this app, return false.
+        return false
     }
     
     // MARK: UISceneSession Lifecycle
@@ -96,39 +103,68 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             return
         }
         
+        UserDefaults.standard.set(email, forKey: "email")
+        
         //let email = user.profile!.email
         
         DatabaseManager.shared.userExists(with: email, completion: {exists in
             if !exists {
                 //Insert to database
-                DatabaseManager.shared.insertUser(with: TimesyAppUser(firstName: firstName,
-                                                                      lastName: lastName,
-                                                                      emailAddress: email))
+                let chatUser = TimesyAppUser(firstName: firstName,
+                                             lastName: lastName,
+                                             emailAddress: email)
+                
+                DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
+                    if success {
+                        //Upload image
+                        
+                        if user.profile!.hasImage {
+                            guard let url = user.profile?.imageURL(withDimension: 200) else {
+                                return
+                            }
+                            
+                            URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
+                                guard let data = data else {
+                                    print("Failed to get data from facebook")
+                                    return
+                                }
+                                
+                                let fileName = chatUser.profilePictureFileName
+                                StorageManager.shared.uploadProfilePicture(with: data, fileName: fileName, completion: { result in
+                                    switch result {
+                                    case .success(let downloadUrl):
+                                        UserDefaults.standard.set(downloadUrl, forKey: "profile_picture_url")
+                                        print(downloadUrl)
+                                    case .failure(let error):
+                                        print("Storage nmabager error: \(error)")
+                                    }
+                                })
+                            }).resume()
+                        }
+                    }
+                })
             }
         })
-            
- //      guard let authentication = user.authentication else {
- //          print("missing auth object off of google user")
- //          return
- //      }
-
- //              let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
- //                                                             accessToken: authentication.accessToken)
- //      FirebaseAuth.Auth.auth().signIn(with: credential, completion: { authResult, error in
- //          guard authResult != nil, error == nil else {
- //              print("Failed to Log In with google credential")
- //              return
- //          }
- //
- //          print("Successfully signed in with Google Credential")
- //          NotificationCenter.default.post(name: .didLogInNotification, object: nil)
- //      })
-  }
-    
-    func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-        print("Google User was disconnected")
+//        guard let authentication = user.authentication else {
+//            print("missing auth object off of google user")
+//            return
+//        }
+//        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+//                                                       accessToken: authentication.accessToken)
+//
+//        FirebaseAuth.Auth.auth().signIn(with: credential, completion: { authResult, error in
+//            guard authResult != nil, error == nil else {
+//                print("Failed to Log In with google credential")
+//                return
+//            }
+//
+//            print("Successfully signed in with Google Credential")
+//            NotificationCenter.default.post(name: .didLogInNotification, object: nil)
+//        })
+        
+        
+        func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+            print("Google User was disconnected")
+        }
     }
 }
-
-
-
