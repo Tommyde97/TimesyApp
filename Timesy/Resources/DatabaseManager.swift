@@ -100,6 +100,68 @@ extension DatabaseManager {
     }
 }
 
+// Mark: - Sending messages/conversations
+
+extension DatabaseManager {
+    
+    /*
+     
+         "gsdhsdkjh" {
+            "messages": [
+            {
+                 "id":String,
+                 "type": text, photo, video
+                 "content": String,
+                 "date": Date()
+                 "sender_email": String,
+                 "isRead": true/false,
+            }
+        ]
+     }
+     
+         conversation => [
+            [
+            "conversation_id": "kigfygsuy"
+            "other_user_email":
+            "latest_message": => {
+                 "date": Date()
+                 "latest_message": "message"
+                 "is_read": true/false
+                }
+            ],
+         ]
+     
+     */
+    
+    /// Creates a new conversation with target user email and first message sent
+    public func createNewConversation(with otherUserEmail: String, fisrMessage: Message, completion: @escaping (Bool) -> Void) {
+        
+    }
+    
+    /// Fetches and returns all conversations for the user with passed in email
+    public func getAllConversations(for email: String, completion: @escaping (Result<String, Error>) -> Void) {
+        
+    }
+    
+    /// Gets all messages for a given conversation
+    public func getAllMessagesForConversation(with id: String, comlpetion: @escaping (Result<String, Error>) -> Void) {
+        
+    }
+    
+    /// Sends a message with a target conversation and message
+    public func sendMessage(to conversation: String, message: Message, completion: @escaping (Bool) -> Void) {
+        
+    }
+}
+
+
+
+
+
+
+
+
+
 struct TimesyAppUser {
     let firstName: String
     let lastName: String
@@ -115,3 +177,4 @@ struct TimesyAppUser {
         return "\(safeEmail)_profile_picture.png"
     }
 }
+
