@@ -27,6 +27,7 @@
 		725B7E902A43818B00CB61CC /* Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E8F2A43818B00CB61CC /* Extensions.swift */; };
 		72820D622A4E03B000237F8B /* StorageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 72820D612A4E03B000237F8B /* StorageManager.swift */; };
 		72FAF6CD2A4E0BEC0042A163 /* FirebaseStorage.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 72FAF6CC2A4E0BEC0042A163 /* FirebaseStorage.framework */; };
+		732AC92F2A53511400D9AA3F /* ConversationTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 732AC92E2A53511400D9AA3F /* ConversationTableViewCell.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -55,6 +56,7 @@
 		72820D612A4E03B000237F8B /* StorageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StorageManager.swift; sourceTree = "<group>"; };
 		72C6EC3A2A44E80100B594EF /* Timesy.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; path = Timesy.entitlements; sourceTree = "<group>"; };
 		72FAF6CC2A4E0BEC0042A163 /* FirebaseStorage.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; path = FirebaseStorage.framework; sourceTree = BUILT_PRODUCTS_DIR; };
+		732AC92E2A53511400D9AA3F /* ConversationTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConversationTableViewCell.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -135,6 +137,7 @@
 			children = (
 				725B7E3C2A4350DF00CB61CC /* Storyboards */,
 				725B7E2A2A43504500CB61CC /* Assets.xcassets */,
+				732AC92E2A53511400D9AA3F /* ConversationTableViewCell.swift */,
 			);
 			path = Views;
 			sourceTree = "<group>";
@@ -323,6 +326,7 @@
 				725B7E212A43504400CB61CC /* SceneDelegate.swift in Sources */,
 				725B7E402A4351F800CB61CC /* PhotoViewerViewController.swift in Sources */,
 				725B7E8C2A437E7A00CB61CC /* LoginViewController.swift in Sources */,
+				732AC92F2A53511400D9AA3F /* ConversationTableViewCell.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

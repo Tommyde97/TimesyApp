@@ -105,21 +105,23 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
     
     func inputBar(_ inputBar: InputBarAccessoryView, didPressSendButtonWith text: String) {
         guard !text.replacingOccurrences(of: " ", with: "").isEmpty,
-        let selfSender = self.selfSender,
-        let messageID = createMessageId() else {
+              let selfSender = self.selfSender,
+              let messageID = createMessageId() else {
             return
         }
         
         print("Sending: \(text)")
         
         //Send Message
-        if isNewConversation{
+        if isNewConversation {
             //Crete Convo in database
             let message = Message(sender: selfSender,
                                   messageId: messageID,
                                   sentDate: Date(),
                                   kind: .text(text))
-            DatabaseManager.shared.createNewConversation(with: otherUserEmail, firstMessage: message, completion: { success in
+
+            DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: message, completion: { success in
+
                 if success {
                     print("message sent")
                 } else {
@@ -129,8 +131,9 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         } else {
             //Append to existing conversation data
         }
-    }
-    
+                                                         
+}
+                                                         
     private func createMessageId() -> String? {
         //Date, otherUserEmail, senderEmail, randomInt
         
@@ -142,11 +145,11 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         
         let dateString = Self.dateFormatter.string(from: Date())
         let newIdentifier = "\(otherUserEmail)_\(safeCurrentEmail)_\(dateString)"
+
         print("Created message id: \(newIdentifier)")
         return newIdentifier
-        
     }
-}
+}                                                        
 
 extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, MessagesDisplayDelegate {
     
@@ -165,6 +168,5 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
     func numberOfSections(in messagesCollectionView: MessageKit.MessagesCollectionView) -> Int {
         return messages.count
     }
-    
     
 }
