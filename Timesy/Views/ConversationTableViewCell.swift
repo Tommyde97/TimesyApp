@@ -46,6 +46,7 @@ class ConversationTableViewCell: UITableViewCell {
     
     override func layoutSubviews() {
         super.layoutSubviews()
+        
         userImageView.frame = CGRect(x: 10,
                                      y: 10,
                                      width: 100,
@@ -65,7 +66,7 @@ class ConversationTableViewCell: UITableViewCell {
         self.userMessageLabel.text = model.latestMessage.text
         self.userNameLabel.text = model.name
         
-        let path = "\(model.otherUserEmail)_profile_picture.png"
+        let path = "images/\(model.otherUserEmail)_profile_picture.png"
         StorageManager.shared.downloadUrl(for: path, completion: { [weak self] result in
             switch result {
             case .success(let url):

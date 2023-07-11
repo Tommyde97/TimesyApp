@@ -104,6 +104,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         }
         
         UserDefaults.standard.set(email, forKey: "email")
+        UserDefaults.standard.set("\(firstName) \(lastName)", forKey: "name")
         
         //let email = user.profile!.email
         
