@@ -13,6 +13,7 @@ pod 'FirebaseCore'
 pod 'FirebaseAuth'
 pod 'FirebaseDatabase'
 pod 'FirebaseStorage'
+# pod 'Firebase/Crashlytics'
 
 # Facebook Log In
 
