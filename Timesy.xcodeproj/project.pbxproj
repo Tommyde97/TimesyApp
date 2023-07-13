@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		5B6299BE44E04A6E4AC95625 /* Pods_Timesy.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 03C5BD262DA05BC524A18EDE /* Pods_Timesy.framework */; };
+		721FA3B42A605D3D00F96935 /* LocationPickerViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 721FA3B32A605D3D00F96935 /* LocationPickerViewController.swift */; };
 		7220335A2A4DE52E00DBC2D8 /* ChatViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 722033592A4DE52E00DBC2D8 /* ChatViewController.swift */; };
 		725B7E1F2A43504400CB61CC /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E1E2A43504400CB61CC /* AppDelegate.swift */; };
 		725B7E212A43504400CB61CC /* SceneDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 725B7E202A43504400CB61CC /* SceneDelegate.swift */; };
@@ -35,6 +36,7 @@
 		03C5BD262DA05BC524A18EDE /* Pods_Timesy.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_Timesy.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		5FABC075287C071A5535C405 /* Pods-Timesy.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timesy.release.xcconfig"; path = "Target Support Files/Pods-Timesy/Pods-Timesy.release.xcconfig"; sourceTree = "<group>"; };
 		6C1D135E9947D2C6636F76D3 /* Pods-Timesy.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-Timesy.debug.xcconfig"; path = "Target Support Files/Pods-Timesy/Pods-Timesy.debug.xcconfig"; sourceTree = "<group>"; };
+		721FA3B32A605D3D00F96935 /* LocationPickerViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LocationPickerViewController.swift; sourceTree = "<group>"; };
 		722033592A4DE52E00DBC2D8 /* ChatViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ChatViewController.swift; sourceTree = "<group>"; };
 		725B7E1B2A43504400CB61CC /* Timesy.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Timesy.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		725B7E1E2A43504400CB61CC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
@@ -155,6 +157,7 @@
 				725B7E412A43520900CB61CC /* VideoPlayerViewController.swift */,
 				725B7E432A43521C00CB61CC /* NewConversationViewController.swift */,
 				725B7E452A43522B00CB61CC /* ProfileViewController.swift */,
+				721FA3B32A605D3D00F96935 /* LocationPickerViewController.swift */,
 			);
 			path = Controllers;
 			sourceTree = "<group>";
@@ -318,6 +321,7 @@
 				725B7E232A43504400CB61CC /* ConversationsViewController.swift in Sources */,
 				725B7E3E2A4351C300CB61CC /* RegisterViewController.swift in Sources */,
 				725B7E8A2A43613700CB61CC /* DatabaseManager.swift in Sources */,
+				721FA3B42A605D3D00F96935 /* LocationPickerViewController.swift in Sources */,
 				72820D622A4E03B000237F8B /* StorageManager.swift in Sources */,
 				725B7E442A43521C00CB61CC /* NewConversationViewController.swift in Sources */,
 				725B7E1F2A43504400CB61CC /* AppDelegate.swift in Sources */,
