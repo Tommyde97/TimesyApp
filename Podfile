@@ -24,6 +24,7 @@ pod 'FacebookShare'
 # Google Sign In
 
 pod 'GoogleSignIn'
+# pod 'GoogleSignInSwiftSupport'
 
 pod 'MessageKit'
 pod 'JGProgressHUD'

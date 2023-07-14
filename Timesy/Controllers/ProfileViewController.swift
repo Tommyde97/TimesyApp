@@ -55,6 +55,9 @@ class ProfileViewController: UIViewController {
                     return
                 }
                 
+                UserDefaults.standard.setValue(nil, forKey: "email")
+                UserDefaults.standard.setValue(nil, forKey: "name")
+                
                 // Log Out Facebook
                 FBSDKLoginKit.LoginManager().logOut()
                 
@@ -155,11 +158,11 @@ class ProfileTableViewCell: UITableViewCell {
         switch viewModel.viewModelType
         {
         case .info:
-            self.textLabel?.textAlignment = .left
-            self.selectionStyle = .none
+            textLabel?.textAlignment = .left
+            selectionStyle = .none
         case .logout:
-            self.textLabel?.textColor = .red
-            self.textLabel?.textAlignment = .center
+            textLabel?.textColor = .red
+            textLabel?.textAlignment = .center
         }
     }
 }

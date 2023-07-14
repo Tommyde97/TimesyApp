@@ -79,7 +79,7 @@ class ChatViewController: MessagesViewController {
     }()
     
     public let otherUserEmail: String
-    private let conversationId: String?
+    private var conversationId: String?
     public var isNewConversation = false
     
     private var messages = [Message]()
@@ -387,7 +387,6 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                 }
             })
         }
-        //Send Message
     }
 }
 
@@ -409,14 +408,18 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
         
         //Send Message
         if isNewConversation {
-            //Crete Convo in database
             
-
+            //Crete Convo in database
             DatabaseManager.shared.createNewConversation(with: otherUserEmail, name: self.title ?? "User", firstMessage: message, completion: { [weak self] success in
 
                 if success {
                     print("message sent")
                     self?.isNewConversation = false
+                    let newConversationId = "conversation_\(message.messageId)"
+                    self?.conversationId = newConversationId
+                    self?.listenForMessages(id: newConversationId, shouldScrollToBottom: true)
+                    self?.messageInputBar.inputTextView.text = nil
+                    
                 } else {
                     print("failed to send")
                 }
@@ -426,8 +429,9 @@ extension ChatViewController: InputBarAccessoryViewDelegate {
                 return
             }
             //Append to existing conversation data
-            DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: otherUserEmail , name: name, newMessage: message, completion: { success in
+            DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: otherUserEmail , name: name, newMessage: message, completion: { [weak self] success in
                 if success {
+                    self?.messageInputBar.inputTextView.text = nil
                     print("message sent")
                 } else {
                     print("failed to send")
@@ -564,7 +568,7 @@ extension ChatViewController: MessageCellDelegate {
             let vc = LocationPickerViewController(coordinates: coordinates)
             vc.title = "Location"
             
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         default:
             break
         }
@@ -584,7 +588,7 @@ extension ChatViewController: MessageCellDelegate {
                 return
             }
             let vc = PhotoViewerViewController(with: imageUrl)
-            self.navigationController?.pushViewController(vc, animated: true)
+            navigationController?.pushViewController(vc, animated: true)
         case .video(let media):
             guard let videoUrl = media.url else {
                 return

@@ -13,6 +13,7 @@ import FBSDKLoginKit
 import FirebaseAuth
 import GoogleSignIn
 
+
 @UIApplicationMain
 class AppDelegate: UIResponder, UIApplicationDelegate {
     
@@ -20,29 +21,41 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                      didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?) -> Bool {
         
         FirebaseApp.configure()
+        
         ApplicationDelegate.shared.application(application, didFinishLaunchingWithOptions: launchOptions)
+        GIDSignIn.sharedInstance.restorePreviousSignIn { user, error in
+            if error != nil || user == nil {
+                // Show the app's signed-out state.
+            } else {
+                // Show the app's signed-in state.
+            }
+        }
         return true
     }
+    
+    //GIDSignIn.sharedInstance.configuration?.clientID = FirebaseApp.app()?.options.configuration?.clientID
+    //GIDSignIn.sharedInstance.delegate = self
     
     func application(_ app: UIApplication,
                      open url: URL,
                      options: [UIApplication.OpenURLOptionsKey : Any] = [:]) -> Bool {
-        ApplicationDelegate.shared.application(app,
-                                               open: url,
-                                               sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
-                                               annotation: options[UIApplication.OpenURLOptionsKey.annotation]
-        )
+        
         var handled: Bool
+        
         handled = GIDSignIn.sharedInstance.handle(url)
         if handled {
             return true
         }
-        
         // Handle other custom URL types.
-        
+        ApplicationDelegate.shared.application(app,
+                                               open: url,
+                                               sourceApplication: options[UIApplication.OpenURLOptionsKey.sourceApplication] as? String,
+                                               annotation: options[UIApplication.OpenURLOptionsKey.annotation])
         // If not handled by this app, return false.
         return false
     }
+    
+    
     
     // MARK: UISceneSession Lifecycle
     
@@ -56,7 +69,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: - Core Data stack
     
-    lazy var persistentContainer: NSPersistentContainer = {
+    var persistentContainer: NSPersistentContainer = {
         
         let container = NSPersistentContainer(name: "Chat")
         container.loadPersistentStores(completionHandler: { (storeDescription, error) in
@@ -117,16 +130,15 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 
                 DatabaseManager.shared.insertUser(with: chatUser, completion: { success in
                     if success {
-                        //Upload image
                         
+                        //Upload image
                         if user.profile!.hasImage {
-                            guard let url = user.profile?.imageURL(withDimension: 200) else {
+                            guard let url = user.profile!.imageURL(withDimension: 200) else {
                                 return
                             }
                             
                             URLSession.shared.dataTask(with: url, completionHandler: { data, _, _ in
                                 guard let data = data else {
-                                    print("Failed to get data from facebook")
                                     return
                                 }
                                 
@@ -146,26 +158,27 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
                 })
             }
         })
-//        guard let authentication = user.authentication else {
-//            print("missing auth object off of google user")
-//            return
-//        }
-//        let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
-//                                                       accessToken: authentication.accessToken)
-//
-//        FirebaseAuth.Auth.auth().signIn(with: credential, completion: { authResult, error in
-//            guard authResult != nil, error == nil else {
-//                print("Failed to Log In with google credential")
-//                return
-//            }
-//
-//            print("Successfully signed in with Google Credential")
-//            NotificationCenter.default.post(name: .didLogInNotification, object: nil)
-//        })
-        
-        
-        func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
-            print("Google User was disconnected")
-        }
+        //      guard let authentication = user.authentication else {
+        //          print("missing auth object off of google user")
+        //          return
+        //      }
+        //      let credential = GoogleAuthProvider.credential(withIDToken: authentication.idToken,
+        //                                                     accessToken: authentication.accessToken)
+        //
+        //      FirebaseAuth.Auth.auth().signIn(with: credential, completion: { authResult, error in
+        //          guard authResult != nil, error == nil else {
+        //              print("Failed to Log In with google credential")
+        //              return
+        //          }
+        //
+        //          print("Successfully signed in with Google Credential")
+        //          NotificationCenter.default.post(name: .didLogInNotification, object: nil)
+        //      })
+        //
+        //      func sign(_ signIn: GIDSignIn!, didDisconnectWith user: GIDGoogleUser!, withError error: Error!) {
+        //          print("Google User was disconnected")
+        //      }
+        //  }
     }
 }
+

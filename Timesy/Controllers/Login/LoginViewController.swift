@@ -79,6 +79,17 @@ class LoginViewController: UIViewController {
         return button
     }()
 
+ //  func handleSignInButton() {
+ //    GIDSignIn.sharedInstance.signIn(
+ //      withPresenting: rootViewController) { signInResult, error in
+ //        guard let result = signInResult else {
+ //          // Inspect error
+ //          return
+ //        }
+ //        // If sign in succeeded, display the app's main content View.
+ //      }
+ //  }
+    
     private let googleLogInButton: GIDSignInButton = {
         let button = GIDSignInButton()
         return button
