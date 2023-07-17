@@ -69,7 +69,3 @@ class NewConversationCell: UITableViewCell {
     }
 }
 
-struct SearchResult {
-    let name: String
-    let email: String
-}
