@@ -432,6 +432,7 @@ extension DatabaseManager {
                               let placeHolder = UIImage(systemName: "play.circle") else {
                                 return nil
                         }
+                     
                         let media = Media(url: videoUrl,
                                           image: nil,
                                           placeholderImage: placeHolder,

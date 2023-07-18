@@ -7,6 +7,8 @@
 
 import Foundation
 import FirebaseStorage
+import MessageKit
+import SDWebImage
 
 
 /// Allos user to get, getch, and upload files to firebase storage
@@ -75,12 +77,11 @@ final class StorageManager {
     /// Upload video that will be sent in a conversation message
     public func uploadMessageVideo(with fileUrl: URL, fileName: String, completion: @escaping UploadPictureCompletion) {
         storage.child("message_videos/\(fileName)").putFile(from: fileUrl, metadata: nil, completion: { [weak self] metadata, error in
-            guard error == nil else {
-                //Failed
-                print( "Failed to upload viddeo file to firebase for picture")
-                completion(.failure(StorageErrors.failedToUpload))
-                return
-            }
+            if let error = error {
+                      print("Failed to upload video file to Firebase for picture: \(error.localizedDescription)")
+                      completion(.failure(StorageErrors.failedToUpload))
+                      return
+                  }
 
             self?.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
                 guard let url = url else {

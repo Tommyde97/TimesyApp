@@ -17,6 +17,7 @@ final class ChatViewController: MessagesViewController {
     
     private var senderPhotoURL: URL?
     private var otherUserPhotoURL: URL?
+    private var isActionSheetPresented = false
     
     public static let dateFormatter: DateFormatter = {
         let formatter = DateFormatter()
@@ -44,7 +45,6 @@ final class ChatViewController: MessagesViewController {
                       displayName: "Me")
     }
     
-  
     init(with email: String, id: String?) {
         
         self.conversationId = id
@@ -58,6 +58,7 @@ final class ChatViewController: MessagesViewController {
     
     override func viewDidLoad() {
         super.viewDidLoad()
+        
         view.backgroundColor = .magenta
         
         messagesCollectionView.messagesDataSource = self
@@ -79,27 +80,43 @@ final class ChatViewController: MessagesViewController {
         messageInputBar.setStackViewItems([button], forStack: .left, animated: false)
         
     }
+    
+    private func dismissInputBar() {
+        messageInputBar.inputTextView.resignFirstResponder()
+    }
         
-        private func presentInputActionSheet() {
-            let actionSheet = UIAlertController(title: "Attach Media",
-                                                message: "What would you like to attach?",
-                                                preferredStyle: .actionSheet)
-            actionSheet.addAction(UIAlertAction(title: "Photo", style: .default, handler: { [weak self] _ in
-                self?.presentPhotoInputActionsheet()
-            }))
-            actionSheet.addAction(UIAlertAction(title: "Video", style: .default, handler: { [weak self] _ in
-                self?.presentVideoInputActionsheet()
-            }))
-            actionSheet.addAction(UIAlertAction(title: "Audio", style: .default, handler: {  _ in
-                
-            }))
-            actionSheet.addAction(UIAlertAction(title: "Location", style: .default, handler: { [weak self] _ in
-                self?.presentLocationPicker()
-            }))
-            actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+    private func presentInputActionSheet() {
+        
+        dismissInputBar()
+
+        isActionSheetPresented = true
+        
+        let actionSheet = UIAlertController(title: "Attach Media",
+                                            message: "What would you like to attach?",
+                                            preferredStyle: .actionSheet)
+        actionSheet.addAction(UIAlertAction(title: "Photo", style: .default, handler: { [weak self] _ in
+            self?.presentPhotoInputActionsheet()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Video", style: .default, handler: { [weak self] _ in
+            self?.presentVideoInputActionsheet()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Audio", style: .default, handler: { _ in
             
-            present(actionSheet, animated: true)
-        }
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Location", style: .default, handler: { [weak self] _ in
+            self?.presentLocationPicker()
+        }))
+        actionSheet.addAction(UIAlertAction(title: "Cancel", style: .cancel, handler: nil))
+        
+        self.isActionSheetPresented = false
+        
+        present(actionSheet, animated: true)
+    }
+    
+    override var canBecomeFirstResponder: Bool {
+        // Return true only when the action sheet is not being presented
+        return !isActionSheetPresented
+    }
     
     private func presentLocationPicker() {
         let vc = LocationPickerViewController(coordinates: nil)
@@ -123,7 +140,6 @@ final class ChatViewController: MessagesViewController {
             
             print("long=\(longitude) | lat= \(latitude)")
             
-            
             let location = Location(location: CLLocation(latitude: latitude, longitude: longitude),
                                  size: .zero)
             
@@ -142,7 +158,6 @@ final class ChatViewController: MessagesViewController {
 
         }
         navigationController?.pushViewController(vc, animated: true)
-        
     }
     
     private func presentPhotoInputActionsheet() {
@@ -182,7 +197,7 @@ final class ChatViewController: MessagesViewController {
             picker.sourceType = .camera
             picker.delegate = self
             picker.mediaTypes = ["public.movie"]
-            picker.videoQuality = .typeMedium
+            picker.videoQuality = .typeHigh
             picker.allowsEditing = true
             self?.present(picker, animated: true)
         }))
@@ -192,7 +207,7 @@ final class ChatViewController: MessagesViewController {
             picker.sourceType = .photoLibrary
             picker.delegate = self
             picker.mediaTypes = ["public.movie"]
-            picker.videoQuality = .typeMedium
+            picker.videoQuality = .typeHigh
             picker.allowsEditing = true
             self?.present(picker, animated: true)
         }))
@@ -289,14 +304,31 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                     })
                     
                 case .failure(let error):
-                    print("message photon upload error: \(error)")
+                    print("message photo upload error: \(error)")
                 }
             })
-        } else if let videoUrl = info[.mediaURL] as? URL {
+        } else
+        
+        if let videoUrl = info[.mediaURL] as? URL {
             let fileName = "photo_message_" + messageId.replacingOccurrences(of: " ", with: "-") + ".mov"
+
+            
+            func generateThumbnail(for videoUrl: URL) -> UIImage? {
+                let asset = AVURLAsset(url: videoUrl)
+                let imageGenerator = AVAssetImageGenerator(asset: asset)
+                imageGenerator.appliesPreferredTrackTransform = true
+                
+                let time = CMTime(seconds: 1, preferredTimescale: 60) // Get thumbnail at 1 second
+                do {
+                    let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+                    return UIImage(cgImage: cgImage)
+                } catch {
+                    print("Error generating thumbnail: \(error)")
+                    return nil
+                }
+            }
             
             //Upload Video
-            
             StorageManager.shared.uploadMessageVideo(with: videoUrl, fileName: fileName, completion: { [weak self] result in
                 guard let strongSelf = self else {
                     return
@@ -308,13 +340,13 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                     print("Uploaded Messaage Video: \(urlString)")
                     
                     guard let url = URL(string: urlString),
-                          let placeholder = UIImage(systemName: "plus") else {
+                          let thumbnailImage = generateThumbnail(for: videoUrl) else {
                         return
                     }
                     
                     let media = Media(url: url,
                                       image: nil,
-                                      placeholderImage: placeholder,
+                                      placeholderImage: thumbnailImage,
                                       size: .zero)
                     
                     let message = Message(sender: selfSender,
@@ -331,7 +363,7 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                     })
                     
                 case .failure(let error):
-                    print("message photon upload error: \(error)")
+                    print("message video upload error: \(error)")
                 }
             })
         }
@@ -439,8 +471,8 @@ extension ChatViewController: MessagesDataSource, MessagesLayoutDelegate, Messag
     func backgroundColor(for message: MessageType, at indexPath: IndexPath, in messagesCollectionView: MessagesCollectionView) -> UIColor {
         let sender = message.sender
         if sender.senderId == selfSender?.senderId {
-            //Our message that we havesnet
-            return .link
+            //Our message that we have sent
+            return .clear
         }
         return .secondarySystemBackground
     }
@@ -507,7 +539,6 @@ extension ChatViewController: MessageCellDelegate {
             return
         }
         
-        
         let message = messages[indexPath.section]
         
         switch message.kind {
@@ -526,7 +557,6 @@ extension ChatViewController: MessageCellDelegate {
         guard let indexPath = messagesCollectionView.indexPath(for: cell) else {
             return
         }
-        
         
         let message = messages[indexPath.section]
         
