@@ -30,7 +30,6 @@ final class ChatViewController: MessagesViewController {
     public let otherUserEmail: String
     private var conversationId: String?
     public var isNewConversation = false
-    
     private var messages = [Message]()
     
     private var selfSender: Sender? {
@@ -67,6 +66,10 @@ final class ChatViewController: MessagesViewController {
         messagesCollectionView.messageCellDelegate = self
         messageInputBar.delegate = self
         setupInputButton()
+//        let url = URL (string: videoUrl)
+//        generateThumbnail(for: url!, completion: { (thumbnail) in
+//            self.
+//        })
     }
     
     private func setupInputButton() {
@@ -240,7 +243,6 @@ final class ChatViewController: MessagesViewController {
         })
     }
     
-    
     override func viewDidAppear(_ animated: Bool) {
         super.viewDidAppear(animated)
         messageInputBar.inputTextView.becomeFirstResponder()
@@ -256,13 +258,57 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
         picker.dismiss(animated: true, completion: nil)
     }
     
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
+//    func getThumbnailFromImage(url: URL, compleiton: @escaping ((_ image: UIImage) -> Void)) {
+//        DispatchQueue.global().async {
+//            let asset = AVAsset(url: url)
+//            let avAssetImageGenerator = AVAssetImageGenerator(asset: asset)
+//            avAssetImageGenerator.appliesPreferredTrackTransform = true
+//
+//            let thumbnailTime = CMTimeMake(value: 7, timescale: 1)
+//            do {
+//
+//                let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumbnailTime, actualTime: nil)
+//                let thumbImage = UIImage(cgImage: cgThumbImage)
+//
+//                DispatchQueue.main.async {
+//                    compleiton(thumbImage)
+//                }
+//            } catch {
+//                print(error.localizedDescription)
+//            }
+//        }
+//    }
+    
+    private func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
+        DispatchQueue.global().async {
+            let asset = AVURLAsset(url: videoUrl)
+            let imageGenerator = AVAssetImageGenerator(asset: asset)
+            imageGenerator.appliesPreferredTrackTransform = true
+            
+            let time = CMTime(seconds: 1, preferredTimescale: 60) // Get thumbnail at 1 second
+            do {
+                
+                let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+                let thumbnail = UIImage(cgImage: cgImage)
+                DispatchQueue.main.async {
+                    completion(thumbnail)
+                }
+            } catch {
+                print("Error generating thumbnail: \(error)")
+                DispatchQueue.main.async {
+                    completion(nil)
+                }
+            }
+        }
+    }
+    
+    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
         picker.dismiss(animated: true, completion: nil)
         
         guard let messageId = createMessageId(),
-        let conversationId = conversationId,
-        let name = self.title,
-        let selfSender = selfSender else {
+              let conversationId = conversationId,
+              let name = self.title,
+              let selfSender = selfSender else {
             return
         }
         
@@ -309,64 +355,50 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
             })
         } else
         
-        if let videoUrl = info[.mediaURL] as? URL {
+        if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
             let fileName = "photo_message_" + messageId.replacingOccurrences(of: " ", with: "-") + ".mov"
-
-            
-            func generateThumbnail(for videoUrl: URL) -> UIImage? {
-                let asset = AVURLAsset(url: videoUrl)
-                let imageGenerator = AVAssetImageGenerator(asset: asset)
-                imageGenerator.appliesPreferredTrackTransform = true
-                
-                let time = CMTime(seconds: 1, preferredTimescale: 60) // Get thumbnail at 1 second
-                do {
-                    let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
-                    return UIImage(cgImage: cgImage)
-                } catch {
-                    print("Error generating thumbnail: \(error)")
-                    return nil
-                }
-            }
-            
-            //Upload Video
-            StorageManager.shared.uploadMessageVideo(with: videoUrl, fileName: fileName, completion: { [weak self] result in
-                guard let strongSelf = self else {
-                    return
-                }
-                
-                switch result {
-                case .success(let urlString):
-                    //Ready to send message
-                    print("Uploaded Messaage Video: \(urlString)")
-                    
-                    guard let url = URL(string: urlString),
-                          let thumbnailImage = generateThumbnail(for: videoUrl) else {
-                        return
-                    }
-                    
-                    let media = Media(url: url,
-                                      image: nil,
-                                      placeholderImage: thumbnailImage,
-                                      size: .zero)
-                    
-                    let message = Message(sender: selfSender,
-                                          messageId: messageId,
-                                          sentDate: Date(),
-                                          kind: .video(media))
-                    
-                    DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: strongSelf.otherUserEmail, name: name, newMessage: message, completion: { success in
-                        if success {
-                            print ("Sent Photo Message")
-                        } else {
-                            print("Failed to send photo messsage")
+            generateThumbnail(for: videoUrl) { [weak self] thumbnailImage in
+                if let thumbnailImage = thumbnailImage {
+                    //Upload Video
+                    StorageManager.shared.uploadMessageVideo(with: videoUrl, fileName: fileName, completion: { [weak self] result in
+                        guard let strongSelf = self else {
+                            return
+                        }
+                        
+                        switch result {
+                        case .success(let urlString):
+                            //Ready to send message
+                            print("Uploaded Message Video: \(urlString)")
+                            
+                            guard let url = URL(string: urlString) else {
+                                return
+                            }
+                            
+                            let media = Media(url: url,
+                                              image: nil,
+                                              placeholderImage: thumbnailImage,
+                                              size: .zero)
+                            
+                            let message = Message(sender: selfSender,
+                                                  messageId: messageId,
+                                                  sentDate: Date(),
+                                                  kind: .video(media))
+                            
+                            DatabaseManager.shared.sendMessage(to: conversationId, otherUserEmail: strongSelf.otherUserEmail, name: name, newMessage: message, completion: { success in
+                                if success {
+                                    print ("Sent Video Message")
+                                } else {
+                                    print("Failed to send photo messsage")
+                                }
+                            })
+                        case .failure(let error):
+                            print("message video upload error: \(error)")
                         }
                     })
-                    
-                case .failure(let error):
-                    print("message video upload error: \(error)")
                 }
-            })
+            }
         }
+        picker.dismiss(animated: true, completion: nil)
     }
 }
 
