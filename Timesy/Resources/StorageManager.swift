@@ -16,6 +16,8 @@ final class StorageManager {
 
     static let shared = StorageManager()
     
+    let metadata = StorageMetadata()
+    
     private init() {}
 
     private let storage = Storage.storage().reference()
@@ -76,25 +78,31 @@ final class StorageManager {
     
     /// Upload video that will be sent in a conversation message
     public func uploadMessageVideo(with fileUrl: URL, fileName: String, completion: @escaping UploadPictureCompletion) {
-        storage.child("message_videos/\(fileName)").putFile(from: fileUrl, metadata: nil, completion: { [weak self] metadata, error in
-            if let error = error {
-                      print("Failed to upload video file to Firebase for picture: \(error.localizedDescription)")
-                      completion(.failure(StorageErrors.failedToUpload))
-                      return
-                  }
-
-            self?.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
-                guard let url = url else {
-                    print("Failed to get download url")
-                    completion(.failure(StorageErrors.failedToGetDownloadUrl))
+        metadata.contentType = "video/quicktime"
+        
+        //Convert Video URL to Data
+        if let videoData = NSData(contentsOf: fileUrl) as Data? {
+            
+            storage.child("message_videos/\(fileName)").putData(videoData, metadata: metadata, completion: { [weak self] metadata, error in
+                if let error = error {
+                    print("Failed to upload video file to Firebase for picture: \(error.localizedDescription)")
+                    completion(.failure(StorageErrors.failedToUpload))
                     return
                 }
                 
-                let urlString = url.absoluteString
-                print("download url returned: \(urlString)")
-                completion(.success(urlString))
+                self?.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
+                    guard let url = url else {
+                        print("Failed to get download url")
+                        completion(.failure(StorageErrors.failedToGetDownloadUrl))
+                        return
+                    }
+                    
+                    let urlString = url.absoluteString
+                    print("download url returned: \(urlString)")
+                    completion(.success(urlString))
+                })
             })
-        })
+        }
     }
 
     public enum StorageErrors: Error {

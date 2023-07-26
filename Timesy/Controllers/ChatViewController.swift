@@ -279,7 +279,7 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
 //        }
 //    }
     
-    private func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
+     func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
         DispatchQueue.global().async {
             let asset = AVURLAsset(url: videoUrl)
             let imageGenerator = AVAssetImageGenerator(asset: asset)
