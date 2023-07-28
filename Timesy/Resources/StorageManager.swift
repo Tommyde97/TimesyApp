@@ -82,14 +82,12 @@ final class StorageManager {
         
         //Convert Video URL to Data
         if let videoData = NSData(contentsOf: fileUrl) as Data? {
-            
             storage.child("message_videos/\(fileName)").putData(videoData, metadata: metadata, completion: { [weak self] metadata, error in
                 if let error = error {
                     print("Failed to upload video file to Firebase for picture: \(error.localizedDescription)")
                     completion(.failure(StorageErrors.failedToUpload))
                     return
                 }
-                
                 self?.storage.child("message_videos/\(fileName)").downloadURL(completion: { url, error in
                     guard let url = url else {
                         print("Failed to get download url")
@@ -118,7 +116,6 @@ final class StorageManager {
                 completion(.failure(StorageErrors.failedToGetDownloadUrl))
                 return
             }
-            
             completion(.success(url))
         })
     }

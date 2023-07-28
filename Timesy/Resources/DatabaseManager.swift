@@ -244,7 +244,7 @@ extension DatabaseManager {
                     //Create
                     self?.database.child("\(otherUserEmail)/conversations").setValue([recipient_newConversationData])
                 }
-             })
+            })
             
             // Update Current uswr Conversation Entry
             
@@ -359,116 +359,116 @@ extension DatabaseManager {
             completion(true)
         })
     }
-        public func createNewConversation(with otherUserEmail: String, fisrMessage: Message, completion: @escaping (Bool) -> Void) {
+    public func createNewConversation(with otherUserEmail: String, fisrMessage: Message, completion: @escaping (Bool) -> Void) {
+        
+    }
+    
+    /// Fetches and returns all conversations for the user with passed in email
+    public func getAllConversations(for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void) {
+        database.child("\(email)/conversations").observe(.value, with: { snapshot in
+            guard let value = snapshot.value as? [[String: Any]] else {
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
             
-        }
-        
-        /// Fetches and returns all conversations for the user with passed in email
-        public func getAllConversations(for email: String, completion: @escaping (Result<[Conversation], Error>) -> Void) {
-            database.child("\(email)/conversations").observe(.value, with: { snapshot in
-                guard let value = snapshot.value as? [[String: Any]] else {
-                    completion(.failure(DatabaseError.failedToFetch))
-                    return
+            let conversations: [Conversation] = value.compactMap({ dictionary in
+                guard let conversationId = dictionary["id"] as? String,
+                      let name = dictionary["name"] as? String,
+                      let otherUserEmail = dictionary["other_user_email"] as? String,
+                      let latestMessage = dictionary["latest_message"] as? [String: Any],
+                      let date = latestMessage["date"] as? String,
+                      let message = latestMessage["message"] as? String,
+                      let isRead = latestMessage["is_read"] as? Bool else {
+                    return nil
                 }
                 
-                let conversations: [Conversation] = value.compactMap({ dictionary in
-                    guard let conversationId = dictionary["id"] as? String,
-                          let name = dictionary["name"] as? String,
-                          let otherUserEmail = dictionary["other_user_email"] as? String,
-                          let latestMessage = dictionary["latest_message"] as? [String: Any],
-                          let date = latestMessage["date"] as? String,
-                          let message = latestMessage["message"] as? String,
-                          let isRead = latestMessage["is_read"] as? Bool else {
-                              return nil
-                          }
-                    
-                    let latestMessageObject = LatestMessage(date: date,
-                                                            text: message,
-                                                            isRead: isRead)
-                    return Conversation(id: conversationId,
-                                        name: name,
-                                        otherUserEmail: otherUserEmail,
-                                        latestMessage: latestMessageObject)
-                })
-                completion(.success(conversations))
+                let latestMessageObject = LatestMessage(date: date,
+                                                        text: message,
+                                                        isRead: isRead)
+                return Conversation(id: conversationId,
+                                    name: name,
+                                    otherUserEmail: otherUserEmail,
+                                    latestMessage: latestMessageObject)
             })
-        }
-        
-        /// Gets all messages for a given conversation
-        public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<[Message], Error>) -> Void) {
-            database.child("\(id)/messages").observe(.value, with: { snapshot in
-                guard let value = snapshot.value as? [[String: Any]] else {
-                    completion(.failure(DatabaseError.failedToFetch))
-                    return
+            completion(.success(conversations))
+        })
+    }
+    
+    /// Gets all messages for a given conversation
+    public func getAllMessagesForConversation(with id: String, completion: @escaping (Result<[Message], Error>) -> Void) {
+        database.child("\(id)/messages").observe(.value, with: { snapshot in
+            guard let value = snapshot.value as? [[String: Any]] else {
+                completion(.failure(DatabaseError.failedToFetch))
+                return
+            }
+            
+            let messages: [Message] = value.compactMap({ dictionary in
+                guard let name = dictionary["name"] as? String,
+                      let isRead = dictionary["is_read"] as? Bool,
+                      let messageID = dictionary["id"] as? String,
+                      let content = dictionary["content"] as? String,
+                      let senderEmail = dictionary["sender_email"] as? String,
+                      let type = dictionary["type"] as? String,
+                      let dateString = dictionary["date"] as? String,
+                      let date = ChatViewController.dateFormatter.date(from: dateString) else {
+                    return nil
                 }
-                
-                let messages: [Message] = value.compactMap({ dictionary in
-                    guard let name = dictionary["name"] as? String,
-                          let isRead = dictionary["is_read"] as? Bool,
-                          let messageID = dictionary["id"] as? String,
-                          let content = dictionary["content"] as? String,
-                          let senderEmail = dictionary["sender_email"] as? String,
-                          let type = dictionary["type"] as? String,
-                          let dateString = dictionary["date"] as? String,
-                          let date = ChatViewController.dateFormatter.date(from: dateString) else {
+                var kind: MessageKind?
+                if type == "photo" {
+                    //photo
+                    guard let imageUrl = URL(string: content),
+                          let placeHolder = UIImage(systemName: "plus") else {
                         return nil
                     }
-                    var kind: MessageKind?
-                    if type == "photo" {
-                        //photo
-                        guard let imageUrl = URL(string: content),
-                              let placeHolder = UIImage(systemName: "plus") else {
-                            return nil
-                        }
-                        let media = Media(url: imageUrl,
-                                          image: nil,
-                                          placeholderImage: placeHolder,
-                                          size: CGSize(width: 300, height: 300))
-                        kind = .photo(media)
-                    }
-                    else if type == "video" {
-                        //video
-                        guard let videoUrl = URL(string: content),
-                              let placeHolder = UIImage(systemName: "play.circle") else {
-                                return nil
-                        }
-                     
-                        let media = Media(url: videoUrl,
-                                          image: nil,
-                                          placeholderImage: placeHolder,
-                                          size: CGSize(width: 300, height: 300))
-                        kind = .video(media)
-                    }
-                    else if type == "location" {
-                        let locationComponents = content.components(separatedBy: ",")
-                        guard let longitude = Double(locationComponents[0]),
-                              let latitude = Double(locationComponents[1]) else {
-                            return nil
-                        }
-                        let location = Location(location: CLLocation(latitude: latitude, longitude: longitude),
-                                                size: CGSize(width: 300, height: 300))
-                        kind = .location(location)
-                    }
-                    else {
-                        kind = .text(content)
-                    }
-                    
-                    guard let finalKind = kind else {
+                    let media = Media(url: imageUrl,
+                                      image: nil,
+                                      placeholderImage: placeHolder,
+                                      size: CGSize(width: 300, height: 300))
+                    kind = .photo(media)
+                }
+                else if type == "video" {
+                    //video
+                    guard let videoUrl = URL(string: content),
+                          let placeHolder = UIImage(systemName: "play.circle") else {
                         return nil
                     }
                     
-                    let sender = Sender(photoURL: "",
-                                        senderId: senderEmail,
-                                        displayName: name)
-                    
-                    return Message(sender: sender,
-                                   messageId: messageID,
-                                   sentDate: date,
-                                   kind: finalKind)
-                })
-                completion(.success(messages))
+                    let media = Media(url: videoUrl,
+                                      image: nil,
+                                      placeholderImage: placeHolder,
+                                      size: CGSize(width: 300, height: 300))
+                    kind = .video(media)
+                }
+                else if type == "location" {
+                    let locationComponents = content.components(separatedBy: ",")
+                    guard let longitude = Double(locationComponents[0]),
+                          let latitude = Double(locationComponents[1]) else {
+                        return nil
+                    }
+                    let location = Location(location: CLLocation(latitude: latitude, longitude: longitude),
+                                            size: CGSize(width: 300, height: 300))
+                    kind = .location(location)
+                }
+                else {
+                    kind = .text(content)
+                }
+                
+                guard let finalKind = kind else {
+                    return nil
+                }
+                
+                let sender = Sender(photoURL: "",
+                                    senderId: senderEmail,
+                                    displayName: name)
+                
+                return Message(sender: sender,
+                               messageId: messageID,
+                               sentDate: date,
+                               kind: finalKind)
             })
-        }
+            completion(.success(messages))
+        })
+    }
     
         /// Sends a message with a target conversation and message
     public func sendMessage(to conversation: String, otherUserEmail: String, name: String, newMessage: Message, completion: @escaping (Bool) -> Void) {

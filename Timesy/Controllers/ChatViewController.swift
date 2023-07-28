@@ -223,7 +223,7 @@ final class ChatViewController: MessagesViewController {
         DatabaseManager.shared.getAllMessagesForConversation(with: id, completion: { [weak self] result in
             switch result {
             case .success(let messages):
-                print("success in getting messages")
+                print("Success in getting messages")
                 guard !messages.isEmpty else {
                     return
                 }
@@ -250,56 +250,40 @@ final class ChatViewController: MessagesViewController {
             listenForMessages(id: conversationId, shouldScrollToBottom: true)
         }
     }
+    private lazy var videoPlayerView: UIView = {
+        let view = UIView()
+        view.backgroundColor = .black // You can set the background color to match your UI
+        return view
+    }()
 }
 
 extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
     
+    func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
+       DispatchQueue.global().async {
+           let asset = AVURLAsset(url: videoUrl)
+           let imageGenerator = AVAssetImageGenerator(asset: asset)
+           imageGenerator.appliesPreferredTrackTransform = true
+           
+           let time = CMTime(seconds: 1, preferredTimescale: 60) // Get thumbnail at 1 second
+           do {
+               let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+               let thumbnail = UIImage(cgImage: cgImage)
+               DispatchQueue.main.async {
+                   completion(thumbnail)
+                   print("Thumbnail generated succesfully")
+               }
+           } catch {
+               print("Error generating thumbnail: \(error)")
+               DispatchQueue.main.async {
+                   completion(nil)
+               }
+           }
+       }
+   }
+    
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
-    }
-    
-//    func getThumbnailFromImage(url: URL, compleiton: @escaping ((_ image: UIImage) -> Void)) {
-//        DispatchQueue.global().async {
-//            let asset = AVAsset(url: url)
-//            let avAssetImageGenerator = AVAssetImageGenerator(asset: asset)
-//            avAssetImageGenerator.appliesPreferredTrackTransform = true
-//
-//            let thumbnailTime = CMTimeMake(value: 7, timescale: 1)
-//            do {
-//
-//                let cgThumbImage = try avAssetImageGenerator.copyCGImage(at: thumbnailTime, actualTime: nil)
-//                let thumbImage = UIImage(cgImage: cgThumbImage)
-//
-//                DispatchQueue.main.async {
-//                    compleiton(thumbImage)
-//                }
-//            } catch {
-//                print(error.localizedDescription)
-//            }
-//        }
-//    }
-    
-     func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
-        DispatchQueue.global().async {
-            let asset = AVURLAsset(url: videoUrl)
-            let imageGenerator = AVAssetImageGenerator(asset: asset)
-            imageGenerator.appliesPreferredTrackTransform = true
-            
-            let time = CMTime(seconds: 1, preferredTimescale: 60) // Get thumbnail at 1 second
-            do {
-                
-                let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
-                let thumbnail = UIImage(cgImage: cgImage)
-                DispatchQueue.main.async {
-                    completion(thumbnail)
-                }
-            } catch {
-                print("Error generating thumbnail: \(error)")
-                DispatchQueue.main.async {
-                    completion(nil)
-                }
-            }
-        }
     }
     
     func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey: Any]) {
@@ -324,7 +308,7 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                 switch result {
                 case .success(let urlString):
                     //Ready to send message
-                    print("Uploaded Messaage Photo: \(urlString)")
+                    print("Uploaded Message Photo: \(urlString)")
                     
                     guard let url = URL(string: urlString),
                           let placeholder = UIImage(systemName: "plus") else {
@@ -348,17 +332,19 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
                             print("Failed to send photo messsage")
                         }
                     })
-                    
                 case .failure(let error):
-                    print("message photo upload error: \(error)")
+                    print("Message photo upload error: \(error)")
                 }
             })
+            
         } else
         
         if let videoUrl = info[UIImagePickerController.InfoKey.mediaURL] as? URL {
             let fileName = "photo_message_" + messageId.replacingOccurrences(of: " ", with: "-") + ".mov"
+            
             generateThumbnail(for: videoUrl) { [weak self] thumbnailImage in
                 if let thumbnailImage = thumbnailImage {
+            
                     //Upload Video
                     StorageManager.shared.uploadMessageVideo(with: videoUrl, fileName: fileName, completion: { [weak self] result in
                         guard let strongSelf = self else {
