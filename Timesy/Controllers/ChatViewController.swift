@@ -66,6 +66,7 @@ final class ChatViewController: MessagesViewController {
         messagesCollectionView.messageCellDelegate = self
         messageInputBar.delegate = self
         setupInputButton()
+        
 //        let url = URL (string: videoUrl)
 //        generateThumbnail(for: url!, completion: { (thumbnail) in
 //            self.
@@ -231,7 +232,7 @@ final class ChatViewController: MessagesViewController {
                 
                 DispatchQueue.main.async {
                     self?.messagesCollectionView.reloadDataAndKeepOffset()
-                    
+        
                     if shouldScrollToBottom {
                         self?.messagesCollectionView.scrollToLastItem()
                     }
@@ -258,29 +259,6 @@ final class ChatViewController: MessagesViewController {
 }
 
 extension ChatViewController: UIImagePickerControllerDelegate, UINavigationControllerDelegate {
-    
-    func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
-       DispatchQueue.global().async {
-           let asset = AVURLAsset(url: videoUrl)
-           let imageGenerator = AVAssetImageGenerator(asset: asset)
-           imageGenerator.appliesPreferredTrackTransform = true
-           
-           let time = CMTime(seconds: 1, preferredTimescale: 60) // Get thumbnail at 1 second
-           do {
-               let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
-               let thumbnail = UIImage(cgImage: cgImage)
-               DispatchQueue.main.async {
-                   completion(thumbnail)
-                   print("Thumbnail generated succesfully")
-               }
-           } catch {
-               print("Error generating thumbnail: \(error)")
-               DispatchQueue.main.async {
-                   completion(nil)
-               }
-           }
-       }
-   }
     
     func imagePickerControllerDidCancel(_ picker: UIImagePickerController) {
         picker.dismiss(animated: true, completion: nil)
@@ -385,6 +363,27 @@ extension ChatViewController: UIImagePickerControllerDelegate, UINavigationContr
             }
         }
         picker.dismiss(animated: true, completion: nil)
+    }
+    
+    func generateThumbnail(for videoUrl: URL, completion: @escaping (UIImage?) -> Void) {
+        DispatchQueue.main.async {
+            let asset = AVAsset(url: videoUrl)
+            let imageGenerator = AVAssetImageGenerator(asset: asset)
+            imageGenerator.appliesPreferredTrackTransform = true
+            
+            let time = CMTimeMake(value: 2, timescale: 1) // Get thumbnail at 1 second
+            do {
+                let cgImage = try imageGenerator.copyCGImage(at: time, actualTime: nil)
+                let thumbnail = UIImage(cgImage: cgImage)
+               
+                    completion(thumbnail)
+                    print("Thumbnail generated succesfully")
+                
+            } catch {
+                print("Error generating thumbnail: \(error)")
+                completion(nil)
+            }
+        }
     }
 }
 
