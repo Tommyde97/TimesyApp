@@ -73,11 +73,11 @@
             </objects>
             <point key="canvasLocation" x="527" y="-1370"/>
         </scene>
-        <!--Chats-->
+        <!--Navigation Controller-->
         <scene sceneID="ii1-WW-vuk">
             <objects>
                 <navigationController automaticallyAdjustsScrollViewInsets="NO" id="Z4z-Ey-S04" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Chats" image="message" catalog="system" id="TSi-o4-lr0"/>
+                    <tabBarItem key="tabBarItem" title="" image="message" catalog="system" id="TSi-o4-lr0"/>
                     <toolbarItems/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="9dF-FY-2Xg">
                         <rect key="frame" x="0.0" y="59" width="393" height="96"/>
@@ -92,11 +92,11 @@
             </objects>
             <point key="canvasLocation" x="-112" y="-635"/>
         </scene>
-        <!--Profile-->
+        <!--Navigation Controller-->
         <scene sceneID="si4-pK-D2F">
             <objects>
                 <navigationController id="hXL-2I-YKl" sceneMemberID="viewController">
-                    <tabBarItem key="tabBarItem" title="Profile" image="person" catalog="system" id="ZPk-AH-Ti5"/>
+                    <tabBarItem key="tabBarItem" title="" image="person" catalog="system" id="ZPk-AH-Ti5"/>
                     <navigationBar key="navigationBar" contentMode="scaleToFill" largeTitles="YES" id="bTM-Rz-XOU">
                         <rect key="frame" x="0.0" y="59" width="393" height="96"/>
                         <autoresizingMask key="autoresizingMask"/>
